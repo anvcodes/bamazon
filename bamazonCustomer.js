@@ -1,5 +1,6 @@
 var inquirer= require("inquirer");
 var mysql = require('mysql');
+var Table = require("cli-table");
 
 var con = mysql.createConnection({
   host: "localhost",
@@ -18,42 +19,43 @@ con.connect(function(err) {
     function start(){
 var   query = "SELECT * FROM products";
 con.query(query, function(err, res){
-    var table= new Table({
-        head: ["id", "department_name", "category", "product_quantity"],
-        colWidths: [10, 25, 25, 10, 14],
+     var disTable= new Table({
+         head : ["id", "product_name","department_name", "price", "stock_quantity"],
+         colWidth: [10,20,20,20,20]
+     });
 
-    })
     for(var i=0; i< res.length;i++){
-        table.push([
+        disTable.push([
             res[i].id,
+            res[i].product_name,
             res[i].department_name,
-            res[i].category,
-            res[i].product_quantity
-        ]).then(function(){
-            console.log(table.toString());
-        })
-        
+            res[i].stock_quantity,
+            res[i].price
+        ]);
+
+        console.log(disTable.toString());
         inqPro();
     }
+
 })
 
 function inqPro(){
     inquirer.prompt([
         {
-            name: 'id',
-            type: 'input',
-            message: 'Please enter ID of item you would like to purhcase.',
+            name: "id",
+            type: "input",
+            message: "Please enter ID of item you would like to purhcase.",
             filter: Number,
         },
         {
-            name: 'units',
-            type: 'input',
-            message: 'How many units would you like to purchase?',
+            name: "units",
+            type: "input",
+            message: "how many units would you like to purchase",
             filter: Number,
         },
     ]).then(function(answer){
-        var userQuantity= answer.units;
-        var itemId= answer.id;
+        // var userQuantity= answer.units;
+        // var itemId= answer.id;
         // processOrder(userQuantity,itemId);
     });
 }
