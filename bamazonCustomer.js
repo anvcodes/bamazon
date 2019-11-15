@@ -20,7 +20,7 @@ function start(){
     var   query = "SELECT * FROM products";
     con.query(query, function(err, res){
         var disTable= new Table({
-            head : ["id", "product_name","department_name", "price", "stock_quantity"],
+            head : ["id", "product_name","department_name", "stock_quantity", "price"],
             colWidth: [10,20,20,20,20]
         });
 
@@ -34,9 +34,9 @@ function start(){
         ]);
 
         console.log(disTable.toString());
-        inqPro();
+        
     }
-
+    inqPro();
 })
 
 
@@ -45,17 +45,15 @@ function inqPro(){
         {
             name: "id",
             type: "input",
-            message: "Please enter ID of item you would like to purhcase.",
-            filter: Number,
+            message: "Please enter ID of item you would like to purhcase."
         },
         {
-            name: "units",
+            name: "stock_quantity",
             type: "input",
-            message: "how many units would you like to purchase",
-            filter: Number,
+            message: "how many units would you like to purchase"
         },
     ]).then(function(answer){
-        var userQuantity= answer.units;
+        var userQuantity= answer.stock_quantity;
         var itemId= answer.id;
         processOrder(userQuantity,itemId);
     });
@@ -73,15 +71,18 @@ function processOrder(itemId, userQuantity){
             console.log("Items in stock");
             console.log("Your total cost for" + userQuantity + " " + res[0].product_name + " is " + costTotal + " . ");
             con.query(
-				"UPDATE products SET stock_quantity = stock_quantity -" + userQuantity + "WHERE item_id = " + itemId
+				"UPDATE products WHERE item_id =? " + itemId + " SET stock_quantity = stock_quantity " - userQuantity 
 			);
         }else {
 			console.log(
 				"Sorry we do not have enough " + res[0].product_name + "to complete your order."
             );
         }
+        start();
     });
 }
 
 }
+
+start();
 
