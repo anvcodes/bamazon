@@ -42,7 +42,7 @@ function inventory() {
 			]);
 		}
 		console.log(invTable.toString());
-		inquirerForUpdates();
+		updates();
 	});
 }
 
