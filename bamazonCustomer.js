@@ -39,7 +39,7 @@ function start(){
 })
 
 
-function inquireProduct(){
+function inquireProduct(res){
     inquirer.prompt([
         {
             name: "id",
@@ -51,9 +51,9 @@ function inquireProduct(){
             type: "input",
             message: "how many units would you like to purchase"
         }
-    ]).then(function(answer){
-        var userQuantity= answer.stock_quantity;
-        var itemId= answer.id;
+    ]).then(function(res){
+        var userQuantity= res.stock_quantity;
+        var itemId= res.id;
         processOrder(userQuantity,itemId);
     });
 };
@@ -69,19 +69,30 @@ function processOrder(itemId, userQuantity){
             var costTotal= res[0].price * userQuantity;
             console.log("Item is in stock");
             console.log("Your total cost for " + userQuantity + " " + res[0].product_name + " is " + costTotal + " . ");
-            con.query(
-				"UPDATE products WHERE item_id =? " + itemId + " SET stock_quantity = stock_quantity " - userQuantity 
-			);
+
+            "UPDATE products SET ? WHERE ?",
+            [
+                {
+                    stock_quantity: res[itemId-1].stock_quantity - userQuantity
+                },
+                {
+                    itemId: itemId
+                }
+            ]
+            // con.query(
+			// 	"UPDATE products WHERE item_id=?" + itemId + "SET stock_quantity = stock_quantity " - userQuantity 
+			// );
         }else {
 			console.log(
 				"Sorry we do not have enough " + res[0].product_name + "to complete your order."
             );
         }
-        start();
+        // start();
     });
 }
 
 }
+
 
 // start();
 
